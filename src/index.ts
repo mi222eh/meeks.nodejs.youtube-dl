@@ -1,7 +1,6 @@
 import "./update-checker.js";
 import * as DAL from "./executer.js";
 import { IVideoInfo } from './videoinfo.js';
-import fs from 'fs-extra';
 
 export * as VideoInfo from './videoinfo.js';
 
@@ -11,11 +10,23 @@ export async function getVideoInfo(url:string):Promise<IVideoInfo> {
     return proc.data;
 }
 
-export async function getFormatList(url:string): Promise<any>{
-    const proc = await DAL.getFormatList(url);
+export async function getVideoFormatInfo(url:string, format:string):Promise<IVideoInfo> {
+    const proc = new DAL.YoutubeDL<IVideoInfo>()
+    proc.addCommand(['-s', '-j', '-f', format]).setUrl(url).executeData();
     await proc.promise;
     return proc.data;
 }
+
+export async function download(url:string, format:string, fielpath:string) {
+    const proc  = await DAL.download(url, format, fielpath);
+    await proc.promise;
+}
+
+
+// (async () =>{
+//     const proc  = await DAL.download("https://www.youtube.com/watch?v=eQFbG6CwwdI", "best", "best.mp4");
+//     await proc.promise;
+// })();
 
 
 

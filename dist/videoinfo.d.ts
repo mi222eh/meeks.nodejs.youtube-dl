@@ -1,4 +1,4 @@
-export interface VideoInfo {
+export interface IVideoInfo {
     series?: null;
     height?: number;
     display_id?: string;
@@ -131,7 +131,14 @@ export interface Thumbnail {
     url: string;
     width: number;
 }
+export declare class VideoInfo {
+    raw: string;
+    data: IVideoInfo;
+    constructor(json: string);
+    get VideoOnlyFormats(): Format[];
+    get AudioOnlyFormats(): Format[];
+}
 export declare class VideoInfoConvert {
-    static toVideoInfo(json: string): VideoInfo;
-    static videoInfoToJson(value: VideoInfo): string;
+    static toVideoInfo(json: string): IVideoInfo;
+    static videoInfoToJson(value: IVideoInfo): string;
 }

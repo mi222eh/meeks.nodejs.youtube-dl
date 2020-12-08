@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFormatList = exports.getVideoInfo = exports.VideoInfo = void 0;
+exports.download = exports.getVideoFormatInfo = exports.getVideoInfo = exports.VideoInfo = void 0;
 const tslib_1 = require("tslib");
 require("./update-checker.js");
 const DAL = tslib_1.__importStar(require("./executer.js"));
@@ -11,12 +11,22 @@ async function getVideoInfo(url) {
     return proc.data;
 }
 exports.getVideoInfo = getVideoInfo;
-async function getFormatList(url) {
-    const proc = await DAL.getFormatList(url);
+async function getVideoFormatInfo(url, format) {
+    const proc = new DAL.YoutubeDL();
+    proc.addCommand(['-s', '-j', '-f', format]).setUrl(url).executeData();
     await proc.promise;
     return proc.data;
 }
-exports.getFormatList = getFormatList;
+exports.getVideoFormatInfo = getVideoFormatInfo;
+async function download(url, format, fielpath) {
+    const proc = await DAL.download(url, format, fielpath);
+    await proc.promise;
+}
+exports.download = download;
+// (async () =>{
+//     const proc  = await DAL.download("https://www.youtube.com/watch?v=eQFbG6CwwdI", "best", "best.mp4");
+//     await proc.promise;
+// })();
 // (async () =>{
 //     const proc = await DAL.getFormatList("https://www.youtube.com/watch?v=nuMXKJMWYtA");
 //     await proc.promise;

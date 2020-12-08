@@ -1,5 +1,6 @@
 import "./update-checker.js";
-import { VideoInfo } from './videoinfo.js';
+import { IVideoInfo } from './videoinfo.js';
 export * as VideoInfo from './videoinfo.js';
-export declare function getVideoInfo(url: string): Promise<VideoInfo>;
-export declare function getFormatList(url: string): Promise<any>;
+export declare function getVideoInfo(url: string): Promise<IVideoInfo>;
+export declare function getVideoFormatInfo(url: string, format: string): Promise<IVideoInfo>;
+export declare function download(url: string, format: string, fielpath: string): Promise<void>;

@@ -5,7 +5,7 @@
 //
 //   const videoInfo = Convert.toVideoInfo(json);
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VideoInfoConvert = exports.Protocol = exports.AcceptLanguage = exports.AcceptEncoding = exports.AcceptCharset = exports.Accept = exports.EXT = exports.Acodec = void 0;
+exports.VideoInfoConvert = exports.VideoInfo = exports.Protocol = exports.AcceptLanguage = exports.AcceptEncoding = exports.AcceptCharset = exports.Accept = exports.EXT = exports.Acodec = void 0;
 var Acodec;
 (function (Acodec) {
     Acodec["Mp4A402"] = "mp4a.40.2";
@@ -38,6 +38,19 @@ var Protocol;
 (function (Protocol) {
     Protocol["HTTPS"] = "https";
 })(Protocol = exports.Protocol || (exports.Protocol = {}));
+class VideoInfo {
+    constructor(json) {
+        this.raw = json;
+        this.data = VideoInfoConvert.toVideoInfo(json);
+    }
+    get VideoOnlyFormats() {
+        return this.data.formats.filter(x => x.vcodec !== 'none');
+    }
+    get AudioOnlyFormats() {
+        return this.data.formats.filter(x => x.acodec !== 'none');
+    }
+}
+exports.VideoInfo = VideoInfo;
 // Converts JSON strings to/from your types
 class VideoInfoConvert {
     static toVideoInfo(json) {

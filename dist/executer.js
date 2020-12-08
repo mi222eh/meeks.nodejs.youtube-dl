@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.download = exports.getFormatList = exports.getVideoInfo = void 0;
+exports.YoutubeDL = exports.download = exports.getVideoInfo = void 0;
 const tslib_1 = require("tslib");
 const child_process_1 = tslib_1.__importDefault(require("child_process"));
 const update_checker_js_1 = require("./update-checker.js");
@@ -10,22 +10,19 @@ const update_checker_js_1 = require("./update-checker.js");
  */
 async function getVideoInfo(url) {
     const p = new YoutubeDL();
-    await p.setUrl(url).setCommand(`-s -j`).executeData();
+    await p.setUrl(url).addCommand(['-s', '-j']).executeData();
     return p;
 }
 exports.getVideoInfo = getVideoInfo;
-async function getFormatList(url) {
+function download(url, format, filePath) {
     const p = new YoutubeDL();
-    await p.setUrl(url).setCommand('-F -s -j').executeData();
+    p.setUrl(url).addCommand(['-f', format, '-o', filePath]).execute();
     return p;
-}
-exports.getFormatList = getFormatList;
-function download(url, format) {
 }
 exports.download = download;
 class YoutubeDL {
     constructor() {
-        this.command = "";
+        this.commands = new Set();
     }
     /**
      *
@@ -35,12 +32,11 @@ class YoutubeDL {
         this.url = url;
         return this;
     }
-    /**
-     *
-     * @param {string} command
-     */
-    setCommand(command) {
-        this.command = command;
+    addCommand(command) {
+        if (typeof command === 'string') {
+            command = [command];
+        }
+        command.forEach(x => this.commands.add(x));
         return this;
     }
     get data() {
@@ -55,7 +51,8 @@ class YoutubeDL {
     async execute() {
         await update_checker_js_1.updateStatus;
         this.rawData = "";
-        const command = `youtube-dl.exe ${this.url} ${this.command}`;
+        const commandArgsString = [...this.commands.values()].join(' ');
+        const command = `youtube-dl.exe ${commandArgsString} ${this.url}`;
         console.log("executing command");
         console.log(command);
         this.process = child_process_1.default.spawn(command, {
@@ -77,3 +74,4 @@ class YoutubeDL {
         });
     }
 }
+exports.YoutubeDL = YoutubeDL;

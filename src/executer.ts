@@ -9,28 +9,23 @@ import { IVideoInfo, VideoInfoConvert } from "./videoinfo.js";
  */
 export async function getVideoInfo(url) {
     const p = new YoutubeDL<IVideoInfo>();
-    await p.setUrl(url).setCommand(`-s -j`).executeData();
+    await p.setUrl(url).addCommand(['-s', '-j']).executeData();
+    return p;
+}
+export function download(url:string, format:string, filePath:string){
+    const p = new YoutubeDL<void>();
+    p.setUrl(url).addCommand(['-f', format, '-o', filePath]).execute();
     return p;
 }
 
-export async function getFormatList(url:string){
-    const p = new YoutubeDL<any>();
-    await p.setUrl(url).setCommand('-F -s -j').executeData();
-    return p;
-}
-
-export function download(url:string, format:string){
-
-}
-
-class YoutubeDL<X> {
-    command: string;
+export class YoutubeDL<X> {
+    commands: Set<string>;
     url: string;
     rawData:string;
     process: ChildProcess;
     promise: Promise<void>;
     constructor() {
-        this.command = "";
+        this.commands = new Set();
     }
     /**
      *
@@ -40,12 +35,11 @@ class YoutubeDL<X> {
         this.url = url;
         return this;
     }
-    /**
-     *
-     * @param {string} command
-     */
-    setCommand(command) {
-        this.command = command;
+    addCommand(command:string[] | string) {
+        if(typeof command === 'string'){
+            command = [command];
+        }
+        command.forEach(x => this.commands.add(x));
         return this;
     }
     get data(): X{
@@ -60,7 +54,8 @@ class YoutubeDL<X> {
     async execute() {
        await updateStatus;
         this.rawData = "";
-        const command = `youtube-dl.exe ${this.url} ${this.command}`;
+        const commandArgsString = [...this.commands.values()].join(' ')
+        const command = `youtube-dl.exe ${commandArgsString} ${this.url}`;
         console.log("executing command");
         console.log(command);
         this.process = processes.spawn(command, {
