@@ -18,7 +18,7 @@ export function download(url:string, format:string, filePath:string){
     return p;
 }
 
-export class YoutubeDL<X> {
+export class YoutubeDL<X = void> {
     commands: Set<string>;
     url: string;
     rawData:string;
