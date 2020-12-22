@@ -4,10 +4,11 @@ exports.VideoInfo = exports.YoutubeDLManager = exports.download = exports.getVid
 const tslib_1 = require("tslib");
 require("./update-checker.js");
 const DAL = tslib_1.__importStar(require("./executer.js"));
+const videoInfoManager_js_1 = require("./videoInfo/videoInfoManager.js");
 async function getVideoInfo(url) {
     const proc = await DAL.getVideoInfo(url);
     await proc.promise;
-    return proc.data;
+    return new videoInfoManager_js_1.VideoInfoManager(proc.data);
 }
 exports.getVideoInfo = getVideoInfo;
 async function getVideoFormatInfo(url, format) {
@@ -24,7 +25,7 @@ async function download(url, format, fielpath) {
 exports.download = download;
 exports.YoutubeDLManager = DAL.YoutubeDL;
 exports.VideoInfo = tslib_1.__importStar(require("./videoinfo.js"));
-// export * from './videoInfo/videoInfoManager'
+tslib_1.__exportStar(require("./videoInfo/videoInfoManager"), exports);
 // (async () =>{
 //     const proc  = await DAL.download("https://www.youtube.com/watch?v=eQFbG6CwwdI", "best", "best.mp4");
 //     await proc.promise;

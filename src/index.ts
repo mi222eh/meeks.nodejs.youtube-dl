@@ -1,13 +1,14 @@
 import "./update-checker.js";
 import * as DAL from "./executer.js";
 import { IVideoInfo } from './videoinfo.js';
+import { VideoInfoManager } from "./videoInfo/videoInfoManager.js";
 
 
 
-export async function getVideoInfo(url:string):Promise<IVideoInfo> {
+export async function getVideoInfo(url:string):Promise<VideoInfoManager> {
     const proc = await DAL.getVideoInfo(url);
     await proc.promise;
-    return proc.data;
+    return new VideoInfoManager(proc.data);
 }
 
 export async function getVideoFormatInfo(url:string, format:string):Promise<IVideoInfo> {
@@ -26,7 +27,7 @@ export const YoutubeDLManager =  DAL.YoutubeDL;
 
 
 export * as VideoInfo from './videoinfo.js';
-// export * from './videoInfo/videoInfoManager'
+export * from './videoInfo/videoInfoManager'
 // (async () =>{
 //     const proc  = await DAL.download("https://www.youtube.com/watch?v=eQFbG6CwwdI", "best", "best.mp4");
 //     await proc.promise;
