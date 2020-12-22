@@ -7,7 +7,7 @@ import { IVideoInfo } from "./videoinfo.js";
  */
 export declare function getVideoInfo(url: any): Promise<YoutubeDL<IVideoInfo>>;
 export declare function download(url: string, format: string, filePath: string): YoutubeDL<void>;
-export declare class YoutubeDL<X> {
+export declare class YoutubeDL<X = void> {
     commands: Set<string>;
     url: string;
     rawData: string;
