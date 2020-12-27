@@ -28,9 +28,13 @@ export const YoutubeDLManager =  DAL.YoutubeDL;
 
 export * as VideoInfo from './videoinfo.js';
 export * from './videoInfo/videoInfoManager'
+
+
+
+
 // (async () =>{
-//     const proc  = await DAL.download("https://www.youtube.com/watch?v=eQFbG6CwwdI", "best", "best.mp4");
-//     await proc.promise;
+//     const proc  = await getVideoInfo("https://www.youtube.com/watch?v=eQFbG6CwwdI");
+//     console.log(proc);
 // })();
 
 

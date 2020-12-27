@@ -6,10 +6,10 @@ export class VideoInfoManager {
         this.info = info;
     }
     get audioFormatList(){
-        return this.info.formats.filter(x => x.acodec !== "none");
+        return this.info.formats.filter(x => x.acodec !== "none" && x.vcodec === "none");
     }
     get videoFormatList(){
-        return this.info.formats.filter(x => x.vcodec !== "none");
+        return this.info.formats.filter(x => x.vcodec !== "none" && x.acodec === "none");
     }
     get videoAndAudioFormatList(){
         return this.info.formats.filter(x => x.acodec !== "none" && x.vcodec !== "none");

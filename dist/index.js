@@ -27,8 +27,8 @@ exports.YoutubeDLManager = DAL.YoutubeDL;
 exports.VideoInfo = tslib_1.__importStar(require("./videoinfo.js"));
 tslib_1.__exportStar(require("./videoInfo/videoInfoManager"), exports);
 // (async () =>{
-//     const proc  = await DAL.download("https://www.youtube.com/watch?v=eQFbG6CwwdI", "best", "best.mp4");
-//     await proc.promise;
+//     const proc  = await getVideoInfo("https://www.youtube.com/watch?v=eQFbG6CwwdI");
+//     console.log(proc);
 // })();
 // (async () =>{
 //     const proc = await DAL.getFormatList("https://www.youtube.com/watch?v=nuMXKJMWYtA");
