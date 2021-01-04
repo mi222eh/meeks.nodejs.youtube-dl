@@ -34,7 +34,7 @@ async function update() {
         "https://youtube-dl.org/downloads/latest/youtube-dl.exe",
         {
             responseType: "stream",
-            headers: ['Access-Control-Allow-Origin']
+            headers: {'Access-Control-Allow-Origin': '*'}
         }
     );
     // pipe shit in there

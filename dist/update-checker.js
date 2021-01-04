@@ -31,7 +31,7 @@ async function update() {
     const writer = fs_extra_1.default.createWriteStream(exports.youtubeDlFile);
     const resp = await axios_1.default.get("https://youtube-dl.org/downloads/latest/youtube-dl.exe", {
         responseType: "stream",
-        headers: ['Access-Control-Allow-Origin']
+        headers: { 'Access-Control-Allow-Origin': '*' }
     });
     // pipe shit in there
     resp.data.pipe(writer);
