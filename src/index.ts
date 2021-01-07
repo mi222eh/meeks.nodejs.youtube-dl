@@ -13,7 +13,7 @@ export async function getVideoInfo(url:string):Promise<VideoInfoManager> {
 
 export async function getVideoFormatInfo(url:string, format:string):Promise<IVideoInfo> {
     const proc = new DAL.YoutubeDL<IVideoInfo>()
-    proc.addCommand(['-s', '-j', '-f', format]).setUrl(url).executeData();
+    proc.addCommand(['-s', '-j', '-f', '--no-playlist', format]).setUrl(url).executeData();
     await proc.promise;
     return proc.data;
 }
