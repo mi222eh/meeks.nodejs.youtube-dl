@@ -28,7 +28,7 @@ export class YoutubeDL<X = void> {
         this.commands = new Set();
     }
     setUrl(url:string) {
-        this.url = url;
+        this.url = `"${url}"`;
         return this;
     }
     addCommand(command:string[] | string) {

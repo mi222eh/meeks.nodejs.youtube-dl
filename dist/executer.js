@@ -25,7 +25,7 @@ class YoutubeDL {
         this.commands = new Set();
     }
     setUrl(url) {
-        this.url = url;
+        this.url = `"${url}"`;
         return this;
     }
     addCommand(command) {
