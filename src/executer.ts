@@ -9,7 +9,7 @@ import { IVideoInfo, VideoInfoConvert } from "./videoinfo.js";
  */
 export async function getVideoInfo(url) {
     const p = new YoutubeDL<IVideoInfo>();
-    await p.setUrl(url).addCommand(['-s', '-j']).executeData();
+    await p.setUrl(url).addCommand(['-s', '-j', '--no-playlist']).executeData();
     return p;
 }
 export function download(url:string, format:string, filePath:string){
@@ -27,11 +27,7 @@ export class YoutubeDL<X = void> {
     constructor() {
         this.commands = new Set();
     }
-    /**
-     *
-     * @param {string} url
-     */
-    setUrl(url) {
+    setUrl(url:string) {
         this.url = url;
         return this;
     }

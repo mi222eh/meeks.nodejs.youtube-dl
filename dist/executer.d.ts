@@ -14,11 +14,7 @@ export declare class YoutubeDL<X = void> {
     process: ChildProcess;
     promise: Promise<void>;
     constructor();
-    /**
-     *
-     * @param {string} url
-     */
-    setUrl(url: any): this;
+    setUrl(url: string): this;
     addCommand(command: string[] | string): this;
     get data(): X;
     executeData(): Promise<void>;

@@ -10,7 +10,7 @@ const update_checker_js_1 = require("./update-checker.js");
  */
 async function getVideoInfo(url) {
     const p = new YoutubeDL();
-    await p.setUrl(url).addCommand(['-s', '-j']).executeData();
+    await p.setUrl(url).addCommand(['-s', '-j', '--no-playlist']).executeData();
     return p;
 }
 exports.getVideoInfo = getVideoInfo;
@@ -24,10 +24,6 @@ class YoutubeDL {
     constructor() {
         this.commands = new Set();
     }
-    /**
-     *
-     * @param {string} url
-     */
     setUrl(url) {
         this.url = url;
         return this;
