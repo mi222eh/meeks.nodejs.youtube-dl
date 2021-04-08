@@ -1,22 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.YoutubeDL = exports.download = exports.getVideoInfo = void 0;
+exports.YoutubeDL = exports.download = exports.getVideoInfo = exports.getVideoFormatInfo = void 0;
 const tslib_1 = require("tslib");
 const child_process_1 = tslib_1.__importDefault(require("child_process"));
 const update_checker_js_1 = require("./update-checker.js");
+function getVideoFormatInfo(url, format) {
+    const proc = new YoutubeDL();
+    proc.addCommand(["-s", "-j", "-f", "--no-playlist", format])
+        .setUrl(url)
+        .executeData();
+    return proc;
+}
+exports.getVideoFormatInfo = getVideoFormatInfo;
 /**
  *
  * @param {string} url
  */
-async function getVideoInfo(url) {
+function getVideoInfo(url) {
     const p = new YoutubeDL();
-    await p.setUrl(url).addCommand(['-s', '-j', '--no-playlist']).executeData();
+    p.setUrl(url).addCommand(["-s", "-j", "--no-playlist"]);
+    p.executeData();
     return p;
 }
 exports.getVideoInfo = getVideoInfo;
 function download(url, format, filePath) {
     const p = new YoutubeDL();
-    p.setUrl(url).addCommand(['-f', format, '-o', filePath]).execute();
+    p.setUrl(url).addCommand(["-f", format, "-o", filePath]).execute();
     return p;
 }
 exports.download = download;
@@ -24,18 +33,23 @@ class YoutubeDL {
     constructor() {
         this.commands = new Set();
     }
+    stop() {
+        this.process.kill();
+    }
     setUrl(url) {
         this.url = `"${url}"`;
         return this;
     }
     addCommand(command) {
-        if (typeof command === 'string') {
+        if (typeof command === "string") {
             command = [command];
         }
-        command.forEach(x => this.commands.add(x));
+        command.forEach((x) => this.commands.add(x));
         return this;
     }
     get data() {
+        console.log('DATA');
+        console.log(this.rawData);
         return JSON.parse(this.rawData);
     }
     async executeData() {
@@ -47,19 +61,23 @@ class YoutubeDL {
     async execute() {
         await update_checker_js_1.updateStatus;
         this.rawData = "";
-        const commandArgsString = [...this.commands.values()].join(' ');
-        const command = `youtube-dl.exe ${commandArgsString} ${this.url}`;
+        const commandArgsString = [...this.commands.values()].join(" ");
+        const commandFile = process.platform === 'win32' ? 'youtube-dl.exe' : 'youtube-dl';
+        const command = `${commandFile} ${commandArgsString} ${this.url}`;
         console.log("executing command");
         console.log(command);
         this.process = child_process_1.default.spawn(command, {
-            cwd: update_checker_js_1.youtubeDlFolder,
+            cwd: process.platform === 'win32' ? update_checker_js_1.youtubeDlFolder : undefined,
             shell: true,
+            // windowsHide: false,
         });
         this.process.stderr.on("data", (data) => {
             console.error(data.toString());
         });
         this.promise = new Promise((resolve, reject) => {
             this.process.on("close", (code, signal) => {
+                console.log('CLOSES');
+                console.log(code, signal);
                 if (code === 0) {
                     resolve();
                 }

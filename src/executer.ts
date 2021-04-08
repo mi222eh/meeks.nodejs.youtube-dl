@@ -1,7 +1,19 @@
-import processes, { ChildProcess }  from "child_process";
+import processes, { ChildProcess } from "child_process";
 import path from "path";
-import { youtubeDlFile, updateStatus, youtubeDlFolder } from './update-checker.js';
+import {
+    youtubeDlFile,
+    updateStatus,
+    youtubeDlFolder,
+} from "./update-checker.js";
 import { IVideoInfo, VideoInfoConvert } from "./videoinfo.js";
+
+export async function getVideoFormatInfo(url: string, format: string) {
+    const proc = new YoutubeDL<IVideoInfo>();
+    await proc.addCommand(["-s", "-j", "-f", "--no-playlist", format])
+        .setUrl(url)
+        .executeData();
+    return proc;
+}
 
 /**
  *
@@ -9,36 +21,42 @@ import { IVideoInfo, VideoInfoConvert } from "./videoinfo.js";
  */
 export async function getVideoInfo(url) {
     const p = new YoutubeDL<IVideoInfo>();
-    await p.setUrl(url).addCommand(['-s', '-j', '--no-playlist']).executeData();
+    p.setUrl(url).addCommand(["-s", "-j", "--no-playlist"]);
+    await p.executeData();
     return p;
 }
-export function download(url:string, format:string, filePath:string){
+export async function download(url: string, format: string, filePath: string) {
     const p = new YoutubeDL<void>();
-    p.setUrl(url).addCommand(['-f', format, '-o', filePath]).execute();
+    await p.setUrl(url).addCommand(["-f", format, "-o", filePath]).execute();
     return p;
 }
 
 export class YoutubeDL<X = void> {
     commands: Set<string>;
     url: string;
-    rawData:string;
+    rawData: string;
     process: ChildProcess;
     promise: Promise<void>;
     constructor() {
         this.commands = new Set();
     }
-    setUrl(url:string) {
+    stop() {
+        this.process.kill();
+    }
+    setUrl(url: string) {
         this.url = `"${url}"`;
         return this;
     }
-    addCommand(command:string[] | string) {
-        if(typeof command === 'string'){
+    addCommand(command: string[] | string) {
+        if (typeof command === "string") {
             command = [command];
         }
-        command.forEach(x => this.commands.add(x));
+        command.forEach((x) => this.commands.add(x));
         return this;
     }
-    get data(): X{
+    get data(): X {
+        console.log('DATA');
+        console.log(this.rawData);
         return JSON.parse(this.rawData);
     }
     async executeData() {
@@ -48,14 +66,15 @@ export class YoutubeDL<X = void> {
         });
     }
     async execute() {
-       await updateStatus;
+        await updateStatus;
         this.rawData = "";
-        const commandArgsString = [...this.commands.values()].join(' ')
-        const command = `youtube-dl.exe ${commandArgsString} ${this.url}`;
+        const commandArgsString = [...this.commands.values()].join(" ");
+        const commandFile = process.platform === 'win32' ? 'youtube-dl.exe' : 'youtube-dl';
+        const command = `${commandFile} ${commandArgsString} ${this.url}`;
         console.log("executing command");
         console.log(command);
         this.process = processes.spawn(command, {
-            cwd: youtubeDlFolder,
+            cwd: process.platform === 'win32' ? youtubeDlFolder : undefined,
             shell: true,
             // windowsHide: false,
         });
@@ -65,6 +84,8 @@ export class YoutubeDL<X = void> {
 
         this.promise = new Promise((resolve, reject) => {
             this.process.on("close", (code, signal) => {
+                console.log('CLOSES');
+                console.log(code, signal);
                 if (code === 0) {
                     resolve();
                 } else {

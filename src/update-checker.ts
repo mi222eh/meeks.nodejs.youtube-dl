@@ -1,12 +1,16 @@
 import fs from "fs-extra";
 import axios from "axios";
 import path from "path";
+import commandExists from 'command-exists'
 
 export const youtubeDlFolder = path.resolve("./youtube-dl/")
 export const lastUpdateFile = path.resolve(youtubeDlFolder, "last-update.txt");
 export const youtubeDlFile = path.resolve(youtubeDlFolder, "youtube-dl.exe");
 
 export const updateStatus = (async () => {
+    if(process.platform === 'linux'){
+        return await checkLinux();
+    }
     let exists = await fs.pathExists(youtubeDlFile);
     if (!exists) {
         return await update();
@@ -49,4 +53,12 @@ async function update() {
 
     // write date
     await fs.writeFile(lastUpdateFile, new Date().toISOString());
+}
+
+
+async function checkLinux(){
+    const exists = await commandExists("youtube-dl");
+    if(!exists){
+        throw new Error("Youtube DL does not exist")
+    }
 }

@@ -5,10 +5,14 @@ const tslib_1 = require("tslib");
 const fs_extra_1 = tslib_1.__importDefault(require("fs-extra"));
 const axios_1 = tslib_1.__importDefault(require("axios"));
 const path_1 = tslib_1.__importDefault(require("path"));
+const command_exists_1 = tslib_1.__importDefault(require("command-exists"));
 exports.youtubeDlFolder = path_1.default.resolve("./youtube-dl/");
 exports.lastUpdateFile = path_1.default.resolve(exports.youtubeDlFolder, "last-update.txt");
 exports.youtubeDlFile = path_1.default.resolve(exports.youtubeDlFolder, "youtube-dl.exe");
 exports.updateStatus = (async () => {
+    if (process.platform === 'linux') {
+        return await checkLinux();
+    }
     let exists = await fs_extra_1.default.pathExists(exports.youtubeDlFile);
     if (!exists) {
         return await update();
@@ -43,4 +47,10 @@ async function update() {
     writer.close();
     // write date
     await fs_extra_1.default.writeFile(exports.lastUpdateFile, new Date().toISOString());
+}
+async function checkLinux() {
+    const exists = await command_exists_1.default("youtube-dl");
+    if (!exists) {
+        throw new Error("Youtube DL does not exist");
+    }
 }

@@ -1,52 +1,45 @@
 import "./update-checker.js";
 import * as DAL from "./executer.js";
-import { IVideoInfo } from './videoinfo.js';
+import { IVideoInfo } from "./videoinfo.js";
 import { VideoInfoManager } from "./videoInfo/videoInfoManager.js";
 
-
-
-export async function getVideoInfo(url:string):Promise<VideoInfoManager> {
+export async function getVideoInfo(url: string): Promise<VideoInfoManager> {
     const proc = await DAL.getVideoInfo(url);
     await proc.promise;
     return new VideoInfoManager(proc.data);
 }
 
-export async function getVideoFormatInfo(url:string, format:string):Promise<IVideoInfo> {
-    const proc = new DAL.YoutubeDL<IVideoInfo>()
-    proc.addCommand(['-s', '-j', '-f', '--no-playlist', format]).setUrl(url).executeData();
+export async function getVideoFormatInfo(
+    url: string,
+    format: string
+): Promise<IVideoInfo> {
+    const proc = DAL.getVideoFormatInfo(url, format);
     await proc.promise;
     return proc.data;
 }
 
-export async function download(url:string, format:string, fielpath:string) {
-    const proc  = await DAL.download(url, format, fielpath);
+export async function download(url: string, format: string, fielpath: string) {
+    const proc = await DAL.download(url, format, fielpath);
     await proc.promise;
 }
 
-export const YoutubeDLManager =  DAL.YoutubeDL;
+export const YoutubeDLManager = DAL.YoutubeDL;
 
-
-export * as VideoInfo from './videoinfo.js';
-export * from './videoInfo/videoInfoManager'
-
-
-
+export * as VideoInfo from "./videoinfo.js";
+export * from "./videoInfo/videoInfoManager";
+export * as Executer from "./executer";
 
 // (async () =>{
 //     const proc  = await getVideoInfo("https://www.youtube.com/watch?v=eQFbG6CwwdI");
 //     console.log(proc);
 // })();
 
-
-
-
 // (async () =>{
 //     const proc = await DAL.getFormatList("https://www.youtube.com/watch?v=nuMXKJMWYtA");
 //     await proc.promise;
 //     console.log(proc.rawData);
-    
-// })();
 
+// })();
 
 // (async () => {
 //     console.log("Downloading Info");
