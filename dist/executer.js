@@ -4,9 +4,9 @@ exports.YoutubeDL = exports.download = exports.getVideoInfo = exports.getVideoFo
 const tslib_1 = require("tslib");
 const child_process_1 = tslib_1.__importDefault(require("child_process"));
 const update_checker_js_1 = require("./update-checker.js");
-function getVideoFormatInfo(url, format) {
+async function getVideoFormatInfo(url, format) {
     const proc = new YoutubeDL();
-    proc.addCommand(["-s", "-j", "-f", "--no-playlist", format])
+    await proc.addCommand(["-s", "-j", "-f", format, "--no-playlist"])
         .setUrl(url)
         .executeData();
     return proc;
@@ -16,16 +16,16 @@ exports.getVideoFormatInfo = getVideoFormatInfo;
  *
  * @param {string} url
  */
-function getVideoInfo(url) {
+async function getVideoInfo(url) {
     const p = new YoutubeDL();
     p.setUrl(url).addCommand(["-s", "-j", "--no-playlist"]);
-    p.executeData();
+    await p.executeData();
     return p;
 }
 exports.getVideoInfo = getVideoInfo;
-function download(url, format, filePath) {
+async function download(url, format, filePath) {
     const p = new YoutubeDL();
-    p.setUrl(url).addCommand(["-f", format, "-o", filePath]).execute();
+    await p.setUrl(url).addCommand(["-f", format, "-o", filePath]).execute();
     return p;
 }
 exports.download = download;

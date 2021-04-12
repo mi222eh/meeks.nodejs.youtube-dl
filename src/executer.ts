@@ -9,7 +9,7 @@ import { IVideoInfo, VideoInfoConvert } from "./videoinfo.js";
 
 export async function getVideoFormatInfo(url: string, format: string) {
     const proc = new YoutubeDL<IVideoInfo>();
-    await proc.addCommand(["-s", "-j", "-f", "--no-playlist", format])
+    await proc.addCommand(["-s", "-j", "-f", format, "--no-playlist"])
         .setUrl(url)
         .executeData();
     return proc;

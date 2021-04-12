@@ -12,7 +12,7 @@ async function getVideoInfo(url) {
 }
 exports.getVideoInfo = getVideoInfo;
 async function getVideoFormatInfo(url, format) {
-    const proc = DAL.getVideoFormatInfo(url, format);
+    const proc = await DAL.getVideoFormatInfo(url, format);
     await proc.promise;
     return proc.data;
 }
