@@ -6,10 +6,12 @@ import {
     youtubeDlFolder,
 } from "./update-checker.js";
 import { IVideoInfo, VideoInfoConvert } from "./videoinfo.js";
+import processTerminator from "meeks.nodejs.process.terminator";
 
 export async function getVideoFormatInfo(url: string, format: string) {
     const proc = new YoutubeDL<IVideoInfo>();
-    await proc.addCommand(["-s", "-j", "-f", format, "--no-playlist"])
+    await proc
+        .addCommand(["-s", "-j", "-f", format, "--no-playlist"])
         .setUrl(url)
         .executeData();
     return proc;
@@ -41,7 +43,7 @@ export class YoutubeDL<X = void> {
         this.commands = new Set();
     }
     stop() {
-        this.process.kill();
+        return processTerminator.KillProcess(this.process.pid);
     }
     setUrl(url: string) {
         this.url = `"${url}"`;
@@ -55,7 +57,7 @@ export class YoutubeDL<X = void> {
         return this;
     }
     get data(): X {
-        console.log('DATA');
+        console.log("DATA");
         console.log(this.rawData);
         return JSON.parse(this.rawData);
     }
@@ -69,12 +71,13 @@ export class YoutubeDL<X = void> {
         await updateStatus;
         this.rawData = "";
         const commandArgsString = [...this.commands.values()].join(" ");
-        const commandFile = process.platform === 'win32' ? 'youtube-dl.exe' : 'youtube-dl';
+        const commandFile =
+            process.platform === "win32" ? "youtube-dl.exe" : "youtube-dl";
         const command = `${commandFile} ${commandArgsString} ${this.url}`;
         console.log("executing command");
         console.log(command);
         this.process = processes.spawn(command, {
-            cwd: process.platform === 'win32' ? youtubeDlFolder : undefined,
+            cwd: process.platform === "win32" ? youtubeDlFolder : undefined,
             shell: true,
             // windowsHide: false,
         });
@@ -84,7 +87,7 @@ export class YoutubeDL<X = void> {
 
         this.promise = new Promise((resolve, reject) => {
             this.process.on("close", (code, signal) => {
-                console.log('CLOSES');
+                console.log("CLOSES");
                 console.log(code, signal);
                 if (code === 0) {
                     resolve();
