@@ -6,7 +6,7 @@ import {
     youtubeDlFolder,
 } from "./update-checker.js";
 import { IVideoInfo, VideoInfoConvert } from "./videoinfo.js";
-import processTerminator from "meeks.nodejs.process.terminator";
+import { KillProcess } from "meeks.nodejs.process.terminator";
 
 export async function getVideoFormatInfo(url: string, format: string) {
     const proc = new YoutubeDL<IVideoInfo>();
@@ -43,7 +43,7 @@ export class YoutubeDL<X = void> {
         this.commands = new Set();
     }
     stop() {
-        return processTerminator.KillProcess(this.process.pid);
+        return KillProcess(this.process.pid);
     }
     setUrl(url: string) {
         this.url = `"${url}"`;
